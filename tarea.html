@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Formulario Validado</title>
+  <!-- Importamos SweetAlert2 desde CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+    }
+    form {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 400px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .error {
+      color: red;
+      font-size: 0.9em;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px;
+      width: 100%;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #218838;
+    }
+  </style>
+</head>
+<body>
+
+  <form id="miFormulario">
+    <label>Nombre completo:</label>
+    <input type="text" id="nombre">
+    <div id="errorNombre" class="error"></div>
+
+    <label>Correo electronicp:</label>
+    <input type="email" id="correo">
+    <div id="errorCorreo" class="error"></div>
+
+    <label>Contraseña:</label>
+    <input type="password" id="password">
+    <div id="errorPassword" class="error"></div>
+
+    <label>Confirmar contraseña:</label>
+    <input type="password" id="confirmPassword">
+    <div id="errorConfirm" class="error"></div>
+
+    <button type="submit">Enviar</button>
+  </form>
+
+  <script>
+    const form = document.getElementById("miFormulario");
+
+    form.addEventListener("submit", function(event) {
+      event.preventDefault(); // Evitamos envío automático
+
+      document.getElementById("errorNombre").textContent = "";
+      document.getElementById("errorCorreo").textContent = "";
+      document.getElementById("errorPassword").textContent = "";
+      document.getElementById("errorConfirm").textContent = "";
+
+      const nombre = document.getElementById("nombre").value.trim();
+      const correo = document.getElementById("correo").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const confirmPassword = document.getElementById("confirmPassword").value.trim();
+
+      let valido = true; // Bandera para saber si todo está correcto
+
+      if (!nombre) {
+        document.getElementById("errorNombre").textContent = "El nombre no puede estar vacío.";
+        valido = false;
+      } else if (/\d/.test(nombre)) {
+        document.getElementById("errorNombre").textContent = "El nombre no debe contener números.";
+        valido = false;
+      }
+
+      const regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!correo) {
+        document.getElementById("errorCorreo").textContent = "El correo no puede estar vacío.";
+        valido = false;
+      } else if (!regexCorreo.test(correo)) {
+        document.getElementById("errorCorreo").textContent = "Formato de correo inválido.";
+        valido = false;
+      }
+
+      const regexPassword = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+      if (!password) {
+        document.getElementById("errorPassword").textContent = "La contraseña no puede estar vacía.";
+        valido = false;
+      } else if (!regexPassword.test(password)) {
+        document.getElementById("errorPassword").textContent = 
+          "Debe tener mínimo 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.";
+        valido = false;
+      }
+
+      if (confirmPassword !== password) {
+        document.getElementById("errorConfirm").textContent = "Las contraseñas no coinciden.";
+        valido = false;
+      }
+
+      if (!valido) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Campos incorrectos',
+          text: 'Por favor corrige los errores antes de enviar.'
+        });
+      } else {
+     
+        Swal.fire({
+          title: '¿Deseas enviar el formulario?',
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonText: 'Sí, enviar',
+          cancelButtonText: 'Cancelar'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            Swal.fire({
+              icon: 'success',
+              title: 'Formulario enviado',
+              text: '¡Todo está correcto!'
+            });
+            form.reset(); 
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
